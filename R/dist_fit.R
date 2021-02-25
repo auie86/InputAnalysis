@@ -7,9 +7,12 @@ library("tidyverse")
 library("fitdistrplus")
 
 # Read the dataset
-mydata <- read_csv("../data/days_in_storage.csv")
+mydata <- read_csv("../data/obs.csv")
 
-names(mydata)[1] <- "x"
+# Rename the column
+mydata <- rename(mydata, x=Obs)
+
+# names(mydata)[1] <- "x"
 
 # some descriptive statistics
 mean(mydata$x)
@@ -17,7 +20,7 @@ sd(mydata$x)
 
 # Histogram
 ggplot(data = mydata) +
-  geom_histogram(mapping = aes(x = x), binwidth=15) +
+  geom_histogram(mapping = aes(x = x)) +
   geom_vline(xintercept=mean(mydata$x), color="red") + 
   geom_vline(xintercept=median(mydata$x), color="blue") 
 
