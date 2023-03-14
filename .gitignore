@@ -132,3 +132,5 @@ dmypy.json
 # R Stuff
 .Rproj.user/
 R/R.Rproj
+InputAnalysis.Rproj
+.Rhistory

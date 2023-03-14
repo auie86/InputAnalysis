@@ -7,7 +7,7 @@ library("tidyverse")
 library("fitdistrplus")
 
 # Read the dataset
-mydata <- read_csv("../data/obs.csv")
+mydata <- read_csv("data/obs.csv")
 
 # Rename the column
 mydata <- rename(mydata, x=Obs)
