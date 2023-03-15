@@ -1,7 +1,6 @@
 library("tidyverse")
 library("fitdistrplus")
-library(mc2d)
-
+library("mc2d")
 
 mydata <- read_csv("data/transactions.csv")
 
@@ -37,12 +36,14 @@ Mode_fc <- function(x) {
   ux[which.max(tabulate(match(x, ux)))]
 }
 MyParam <- list(min= min(df$x)-.01, max= max(df$x)+.01, mode= Mode_fc(df$x))
-ftr <- fitdist(df$x, "triang", start = MyParam)  ## works
+ftr <- fitdist(df$x, "triang", method="mge", start = MyParam, gof="KS")  ## works
+summary(ftr)
 
 # compare
 plot.legend <- c("Normal", "Weibull", "lognormal", "Triangular")
+l <- list(fn, fw, fln, ftr)
 par(mfrow = c(2, 2))
-denscomp(list(fn, fw, fln, ftr),legendtext = plot.legend)
-qqcomp(list(fn, fw, fln, ftr), legendtext = plot.legend)
-cdfcomp(list(fn, fw, fln, ftr), legendtext = plot.legend)      
-ppcomp(list(fn, fw, fln, ftr), legendtext = plot.legend)
+denscomp(l,legendtext = plot.legend)
+qqcomp(l, legendtext = plot.legend)
+cdfcomp(l, legendtext = plot.legend)      
+ppcomp(l, legendtext = plot.legend)

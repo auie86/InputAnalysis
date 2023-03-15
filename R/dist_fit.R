@@ -5,6 +5,7 @@
 #
 library("tidyverse")
 library("fitdistrplus")
+library("mc2d")
 
 # Read the dataset
 mydata <- read_csv("data/obs.csv")
@@ -48,10 +49,22 @@ summary(fln)
 fg <- fitdist(mydata$x, "gamma")
 summary(fg)
 
+# Triangular
+# From https://stackoverflow.com/questions/39981889/fit-triangular-distribution
+Mode_fc <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+MyParam <- list(min= min(mydata$x)-.5, max= max(mydata$x)+.5, mode= Mode_fc(mydata$x))
+ftr <- fitdist(mydata$x, "triang", method="mge", start = MyParam, gof="KS")  ## works
+summary(ftr)
+
+
 # compare
-plot.legend <- c("Normal", "Weibull", "lognormal", "gamma")
+plot.legend <- c("Normal", "Weibull", "lognormal", "gamma", "Triangular")
+l <- list(fn, fw, fln, fg, ftr)
 par(mfrow = c(2, 2))
-denscomp(list(fn, fw, fln, fg),legendtext = plot.legend)
-qqcomp(list(fn, fw, fln, fg), legendtext = plot.legend)
-cdfcomp(list(fn, fw, fln, fg), legendtext = plot.legend)      
-ppcomp(list(fn, fw, fln, fg), legendtext = plot.legend)
+denscomp(l,legendtext = plot.legend)
+qqcomp(l, legendtext = plot.legend)
+cdfcomp(l, legendtext = plot.legend)      
+ppcomp(l, legendtext = plot.legend)
