@@ -7,14 +7,15 @@ library("tidyverse")
 library("fitdistrplus")
 library("mc2d")
 
-# Read the dataset
+# If you want to read the dataset
 mydata <- read_csv("data/obs.csv")
-
 # Rename the column
 mydata <- rename(mydata, x=Obs)
 
-# names(mydata)[1] <- "x"
+# If you want to create it manually
+mydata <- as_tibble_col(rnorm(250, mean=100, sd=14), column_name="x")
 
+#
 # some descriptive statistics
 mean(mydata$x)
 sd(mydata$x)
@@ -36,18 +37,25 @@ plotdist(mydata$x, histo = TRUE, demp = TRUE)
 # normal
 fn <- fitdist(mydata$x, "norm")
 summary(fn)
+ks.test(mydata$x, "pnorm", fn$estimate)
+
 
 # Weibull
 fw <- fitdist(mydata$x, "weibull")
 summary(fw)
+ks.test(mydata$x, "pweibull", fw$estimate)
 
 # lognormal
 fln <- fitdist(mydata$x, "lnorm")
 summary(fln)
+ks.test(mydata$x, "plnorm", fln$estimate)
+
 
 # gamma
 fg <- fitdist(mydata$x, "gamma")
 summary(fg)
+ks.test(mydata$x, "pgamma", fg$estimate)
+
 
 # Triangular
 # From https://stackoverflow.com/questions/39981889/fit-triangular-distribution

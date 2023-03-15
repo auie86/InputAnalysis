@@ -1,3 +1,9 @@
+#
+# Dist Fitting example with a large data set of currency swap transactions.
+#
+# 2023-03-14 - Jeff Smith
+#
+#
 library("tidyverse")
 library("fitdistrplus")
 library("mc2d")
