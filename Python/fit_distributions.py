@@ -6,33 +6,33 @@ descriptive statistics, MLE parameters, and GoF p-values.
 
 Distributions fitted
 --------------------
-  normal      – N(mu, sigma)
-  uniform     – U(loc, loc+scale)
-  exponential – Exp(loc, scale=1/lambda)
-  triangular  – Tri(c, loc, scale)   [c is the shape: mode=(loc + c*scale)]
-  lognormal   – LogN(s, loc, scale)  [s=sigma of the underlying normal]
+  normal      - N(mu, sigma)
+  uniform     - U(loc, loc+scale)
+  exponential - Exp(loc, scale=1/lambda)
+  triangular  - Tri(c, loc, scale)   [c is the shape: mode=(loc + c*scale)]
+  lognormal   - LogN(s, loc, scale)  [s=sigma of the underlying normal]
 
 Goodness-of-fit
 ---------------
   Kolmogorov-Smirnov (KS) test is used for all distributions.
-  p-value > 0.05 → insufficient evidence to reject the fit at the 5 % level.
+  p-value > 0.05 -> insufficient evidence to reject the fit at the 5 % level.
 
 CSV input
 ---------
   The CSV file must contain numeric data.  Two layouts are supported:
 
-  • Single-column (no header):
+  - Single-column (no header):
         1.23
         4.56
         ...
 
-  • Single-column (with header):
+  - Single-column (with header):
         value
         1.23
         4.56
         ...
 
-  • Multi-column: pass --column <name|0-based-index> to select the column.
+  - Multi-column: pass --column <name|0-based-index> to select the column.
         id,value,flag
         1,1.23,True
         2,4.56,False
@@ -89,11 +89,11 @@ def load_csv(
        auto-detection handle it.
 
     2. Single-column with optional header:
-           value        ← optional header
+           value        <- optional header
            1.23
            4.56
 
-    3. Multi-column with header – requires --column:
+    3. Multi-column with header - requires --column:
            id,value,flag
            1,1.23,True
 
@@ -119,8 +119,8 @@ def load_csv(
 
     Raises
     ------
-    FileNotFoundError  – file does not exist.
-    ValueError         – column not found, no numeric data, or parse errors.
+    FileNotFoundError  - file does not exist.
+    ValueError         - column not found, no numeric data, or parse errors.
     """
     path = Path(filepath)
     if not path.exists():
@@ -256,7 +256,7 @@ class DescriptiveStats:
 
     def __str__(self) -> str:
         lines = [
-            "── Descriptive Statistics ───────────────────────────────────",
+            "-- Descriptive Statistics -------------------------------------",
             f"  n          : {self.n}",
             f"  mean       : {self.mean:.6g}",
             f"  std (s)    : {self.std:.6g}",
@@ -282,13 +282,13 @@ class FitResult:
     def __str__(self) -> str:
         if not self.success:
             return (
-                f"  {self.distribution:<14}: FIT FAILED – {self.error}"
+                f"  {self.distribution:<14}: FIT FAILED - {self.error}"
             )
         param_str = ",  ".join(f"{k}={v:.6g}" for k, v in self.params.items())
         return (
             f"  {self.distribution:<14}: {param_str}\n"
             f"  {'':14}  KS={self.ks_statistic:.4f},  p={self.p_value:.4f}"
-            + ("  ✓ good fit" if self.p_value >= 0.05 else "  ✗ poor fit")
+            + ("  [good fit]" if self.p_value >= 0.05 else "  [poor fit]")
         )
 
 
@@ -298,8 +298,8 @@ class FitReport:
     fits: list[FitResult] = field(default_factory=list)
 
     def __str__(self) -> str:
-        sep = "─" * 63
-        lines = [sep, str(self.descriptive), sep, "── Distribution Fits ────────────────────────────────────────"]
+        sep = "-" * 63
+        lines = [sep, str(self.descriptive), sep, "-- Distribution Fits ------------------------------------------"]
         for fr in self.fits:
             lines.append(str(fr))
         lines.append(sep)
@@ -355,7 +355,7 @@ def _fit_exponential(data: np.ndarray) -> FitResult:
     ks, p = stats.kstest(data, "expon", args=(loc, scale))
     return FitResult(
         distribution="exponential",
-        params={"loc": loc, "scale (1/λ)": scale, "λ": lam},
+        params={"loc": loc, "scale (1/lambda)": scale, "lambda": lam},
         ks_statistic=ks,
         p_value=p,
         success=True,
@@ -363,7 +363,7 @@ def _fit_exponential(data: np.ndarray) -> FitResult:
 
 
 def _fit_triangular(data: np.ndarray) -> FitResult:
-    # scipy's triang: shape c ∈ (0,1), mode = loc + c*scale
+    # scipy's triang: shape c in (0,1), mode = loc + c*scale
     try:
         c, loc, scale = stats.triang.fit(data)
         mode = loc + c * scale
